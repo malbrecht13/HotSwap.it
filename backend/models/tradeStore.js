@@ -10,4 +10,4 @@ const tradeStoreSchema = mongoose.Schema({
     ],
 });
 
-exports.TradeStore = mongoose.model('TradeStroe', tradeStoreSchema);
+exports.TradeStore = mongoose.model('TradeStore', tradeStoreSchema);
