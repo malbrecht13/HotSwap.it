@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+// TODO: Need to store password as a hash
+
 const userSchema = mongoose.Schema({
     username: {
       type: String,
@@ -9,9 +11,9 @@ const userSchema = mongoose.Schema({
       type: String,
       required: true
     },
-    loginStatus: {
-      type: String,
-      default: "loggedOut"
+    isLoggedIn: {
+      type: Boolean,
+      default: false
     },
     email: {
       type: String,
@@ -56,3 +58,5 @@ userSchema.set('toJSON', {
 })
 
 exports.User = mongoose.model('User', userSchema);
+
+

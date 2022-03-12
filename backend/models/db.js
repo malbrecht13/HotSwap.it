@@ -13,4 +13,4 @@ mongoose
         console.log(err);
     });
 
-require('./product');
+require('./tradeItem');
