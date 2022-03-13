@@ -5,15 +5,13 @@ const jwt = require('jsonwebtoken');
 
 // register a new user
 const createUser = async (req,res) => {
-  const passHash = bcrypt.hashSync(req.body.password, 10); //encrypt the password
-  
   try {
+    const passHash = bcrypt.hashSync(req.body.password, 10); //encrypt the password
     let userStore = new UserStore();
     userStore = await userStore.save();
   let user = new User({
     username: req.body.username,
     passwordHash: passHash,
-    isLoggedIn: false,
     email: req.body.email,
     shippingAddressLine1: req.body.shippingAddressLine1,
     shippingAddressLine2: req.body.shippingAddressLine2,

@@ -1,4 +1,5 @@
 const { TradeItem } = require('../models/tradeItem');
+const { UserStore } = require('../models/userStore');
 
 const updateItemForTrade = async (req, res) => {
     const tradeItemId = req.params.tradeItemId;
@@ -39,6 +40,51 @@ const updateItemForTrade = async (req, res) => {
     }
 };
 
+const deleteTradeItem = async (req,res) => {
+  const itemId = req.params.tradeItemId;
+  try {
+    //first delete the item from the corresponding UserStore
+    const itemToDelete = await TradeItem.findById(itemId);
+    if(!itemToDelete) {
+      return res.status(404).send({message: 'Item to delete not found'});
+    }
+    let userStore = await UserStore.findById(itemToDelete.traderStore);
+    if(!userStore) {
+      return res.status(404).send({message: 'Item to delete\'s store not found'});
+    }
+    
+    
+    const newUserStoreItemsForTrade = userStore.itemsForTrade.filter(tradeItemId => {
+      return tradeItemId.toString() !== itemId;
+    });
+   
+    userStore = await UserStore.findByIdAndUpdate(
+      itemToDelete.traderStore,
+      {
+        itemsForTrade: newUserStoreItemsForTrade
+      },
+      { new: true }
+    )
+    if(!userStore) {
+      return res.status(400).send({message: 'User store could not delete the trade item'});
+    }
+
+    //then delete the item from the TradeItem collection
+    const deletedItem = await TradeItem.findByIdAndRemove(itemId);
+    if (!deletedItem) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Product not found' });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: 'Product successfully deleted' });
+  } catch(e) {
+    return res.status(500).json({success: false, message: 'Error deleting Trade item'});
+  }
+}
+
 module.exports = {
     updateItemForTrade,
+    deleteTradeItem
 };

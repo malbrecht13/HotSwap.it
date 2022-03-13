@@ -32,5 +32,6 @@ const uploadOptions = multer({ storage: storage })
 router
     .route('/:tradeItemId')
     .patch(uploadOptions.single('image'), tradeItemCtrl.updateItemForTrade)
+    .delete(tradeItemCtrl.deleteTradeItem)
 
 module.exports = router;
