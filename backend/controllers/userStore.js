@@ -17,10 +17,10 @@ const getItemsForTrade = async (req, res) => {
     }
 };
 
-// TODO: image url needs to be added correctly
 const addItemForTrade = async (req, res) => {
     const userStoreId = req.params.userStoreId;
     try {
+        // the following is needed to add the image
         const file = req.file;
         if(!file) {
           return res.status(400).send({message: 'No image in the request'});
@@ -76,10 +76,11 @@ const addItemForTrade = async (req, res) => {
     }
 };
 
+
+
 module.exports = {
     getItemsForTrade,
     addItemForTrade,
-    // updateItemForTrade,
     // deleteItemForTrade,
     // getPreviousTrades,
     // getAvgRating

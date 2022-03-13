@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const userStoreCtrl = require('../controllers/userStore');
 const multer = require('multer');
+const tradeItemCtrl = require('../controllers/tradeItems')
 
 // adding png, jpg, and jpeg images are supported
 const FILE_TYPE_MAP = {
@@ -30,19 +30,7 @@ const storage = multer.diskStorage({
 const uploadOptions = multer({ storage: storage })
 
 router
-    .route('/current-trades/:userStoreId')
-    .get(userStoreCtrl.getItemsForTrade)
-    .post(uploadOptions.single('image'), userStoreCtrl.addItemForTrade)
-//     .delete(userStoreCtrl.deleteItemForTrade);
-
-
-
-// router
-//     .route('/previous-trades/:userStoreId')
-//     .get(userStoreCtrl.getPreviousTrades);
-
-// router
-//     .route('/avg-rating/:userStoreId')
-//     .get(userStoreCtrl.getAvgRating);
+    .route('/:tradeItemId')
+    .patch(uploadOptions.single('image'), tradeItemCtrl.updateItemForTrade)
 
 module.exports = router;
