@@ -6,8 +6,10 @@ const jwt = require('jsonwebtoken');
 // register a new user
 const createUser = async (req,res) => {
   const passHash = bcrypt.hashSync(req.body.password, 10); //encrypt the password
-  const userStore = new UserStore();
-
+  
+  try {
+    let userStore = new UserStore();
+    userStore = await userStore.save();
   let user = new User({
     username: req.body.username,
     passwordHash: passHash,
@@ -23,7 +25,7 @@ const createUser = async (req,res) => {
     messages: []
   })
 
-  try {
+  
      user = await user.save();
      if(!user) {
        return res.status(400).send({success: false, message: 'The user cannot be created'});

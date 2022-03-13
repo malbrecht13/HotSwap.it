@@ -20,8 +20,12 @@ app.use(errorHandler);
 // Routes
 const api = process.env.API_URL;
 const userRouter = require('./routes/user');
+// const tradeItemRouter = require('./routes/tradeItems');
+const userStoreRouter = require('./routes/userStore');
 
 app.use(`${api}/users`, userRouter);
+app.use(`${api}/userstore`, userStoreRouter);
+// app.use(`${api}/tradeitems`, tradeItemRouter);
 
 const port = process.env.PORT;
 
