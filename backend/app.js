@@ -16,6 +16,7 @@ app.use(cors());
 app.options('*', cors());
 app.use(authJwt());
 app.use(errorHandler);
+app.use('/public/uploads', express.static(__dirname + '/public/uploads'));
 
 // Routes
 const api = process.env.API_URL;
