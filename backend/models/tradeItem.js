@@ -33,11 +33,11 @@ const tradeItemSchema = mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    trader: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-    },
+    // trader: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User',
+    //     required: true,
+    // },
     offers: [
         {
             type: mongoose.Schema.Types.ObjectId,

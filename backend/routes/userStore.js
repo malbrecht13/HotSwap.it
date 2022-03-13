@@ -5,7 +5,7 @@ const userStoreCtrl = require('../controllers/userStore');
 router
     .route('/current-trades/:userStoreId')
     .get(userStoreCtrl.getItemsForTrade)
-//     .post(userStoreCtrl.addItemForTrade)
+    .post(userStoreCtrl.addItemForTrade)
 //     .put(userStoreCtrl.updateItemForTrade)
 //     .delete(userStoreCtrl.deleteItemForTrade);
 
