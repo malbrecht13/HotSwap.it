@@ -5,6 +5,8 @@ const cors = require('cors');
 
 require('dotenv/config'); // the dotenv library allows us to use environment variables from .env file
 require('./models/db'); //contains the db connection
+const authJwt = require('./helpers/jwt'); // allows user to use api only if authenticated
+const errorHandler = require('./helpers/error-handler'); // handle api errors
 
 // Use middleware
 app.use(express.json());
@@ -12,11 +14,14 @@ app.use(express.urlencoded({extended: false}));
 app.use(morgan('tiny'));
 app.use(cors());
 app.options('*', cors());
+app.use(authJwt());
+app.use(errorHandler);
 
 // Routes
 const api = process.env.API_URL;
-const apiRouter = require('./routes/index');
-app.use(`${api}`, apiRouter);
+const userRouter = require('./routes/user');
+
+app.use(`${api}/users`, userRouter);
 
 const port = process.env.PORT;
 

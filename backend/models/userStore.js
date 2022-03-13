@@ -14,7 +14,7 @@ const userStoreSchema = mongoose.Schema({
         },
     ],
     userAvgRating: {
-        type: Number,
+        type: Number
     },
 });
 
