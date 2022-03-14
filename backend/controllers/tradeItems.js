@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { TradeItem } = require('../models/tradeItem');
 const { UserStore } = require('../models/userStore');
 
@@ -52,7 +53,11 @@ const deleteTradeItem = async (req,res) => {
     if(!userStore) {
       return res.status(404).send({message: 'Item to delete\'s store not found'});
     }
-    
+    //delete image from file path
+    let image = itemToDelete.image;
+    const startOfPath = image.indexOf('/public');
+    const imagePath = image.substring(startOfPath);
+    fs.unlinkSync('../backend' + imagePath);
     
     const newUserStoreItemsForTrade = userStore.itemsForTrade.filter(tradeItemId => {
       return tradeItemId.toString() !== itemId;
@@ -80,6 +85,7 @@ const deleteTradeItem = async (req,res) => {
       .status(200)
       .json({ success: true, message: 'Product successfully deleted' });
   } catch(e) {
+    console.log(e)
     return res.status(500).json({success: false, message: 'Error deleting Trade item'});
   }
 }
