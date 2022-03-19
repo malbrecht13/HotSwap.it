@@ -34,4 +34,8 @@ router
     .patch(uploadOptions.single('image'), tradeItemCtrl.updateItemForTrade)
     .delete(tradeItemCtrl.deleteTradeItem)
 
+router
+    .route('/acceptOffer/:offeredItemId/for/:tradeItemId')
+    .post(tradeItemCtrl.acceptOffer)
+
 module.exports = router;

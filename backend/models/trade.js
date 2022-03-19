@@ -4,12 +4,14 @@ const tradeSchema = mongoose.Schema({
     tradeItem: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'TradeItem',
+        required: true
     },
     offeredItem: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'TradeItem',
+        required: true
     },
-    dateTraded: {
+    dateTradeAccepted: {
         type: Date,
         default: Date.now,
     },
