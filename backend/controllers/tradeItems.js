@@ -2,6 +2,7 @@ const fs = require('fs');
 const { TradeItem } = require('../models/tradeItem');
 const { UserStore } = require('../models/userStore');
 const { Trade } = require('../models/trade');
+const { Notification } = require('../models/notification');
 
 const updateItemForTrade = async (req, res) => {
     const tradeItemId = req.params.tradeItemId;
@@ -160,7 +161,30 @@ const acceptOffer = async (req,res) => {
       return res.status(404).send({message: 'Offered item UserStore not found'});
     }
 
-    //TODO: Send notification to trader to let them know trade has been accepted
+    // Generate notification for offerer
+    let offererId = offeredItemStore.user;
+    let notification = new Notification({
+      user: offererId,
+      type: 'Trade Accepted',
+      description: `Your offer '${offeredItem.name}' has been accepted for trade item '${tradedItem.name}'`,
+    });
+    notification = await notification.save();
+    if(!notification) {
+      res.status(400).send({message: 'Notification could not be generated'});
+    }
+    // Update user notifications
+    let userToNotify = await User.findById(notification.user);
+    let userNotifications = userToNotify.notifications;
+    userNotifications.push(notification.id);
+    userToNotify = await User.findByIdAndUpdate(
+      notification.user,
+      {
+        notifications: userNotifications
+      }
+    )
+    if(!userToNotify) {
+      res.status(404).send({message: 'User to notify concerning accepted trade not found'})
+    }
 
     return res.status(200).send(newTrade);
   } catch (e) {

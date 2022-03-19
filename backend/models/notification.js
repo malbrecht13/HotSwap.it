@@ -1,18 +1,20 @@
 const mongoose = require('mongoose');
 
 const notificationSchema = mongoose.Schema({
-    type: {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+
+     type: {
         type: String,
         required: true,
     },
     description: {
         type: String,
         required: true,
-    },
-    tradeItem: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    },
+    }
 });
 
 // The following two functions allow us to use "id" instead of "_id" in queries
