@@ -3,6 +3,7 @@ const { TradeItem } = require('../models/tradeItem');
 const { UserStore } = require('../models/userStore');
 const { Trade } = require('../models/trade');
 const { Notification } = require('../models/notification');
+const { User } = require('../models/user');
 
 const updateItemForTrade = async (req, res) => {
     const tradeItemId = req.params.tradeItemId;
@@ -79,11 +80,9 @@ const deleteTradeItem = async (req, res) => {
             { new: true }
         );
         if (!userStore) {
-            return res
-                .status(400)
-                .send({
-                    message: 'User store could not delete the trade item',
-                });
+            return res.status(400).send({
+                message: 'User store could not delete the trade item',
+            });
         }
 
         //then delete the item from the TradeItem collection
@@ -103,54 +102,70 @@ const deleteTradeItem = async (req, res) => {
     }
 };
 
-const makeOffer = async (req,res) => {
-  try {
-    const tradedItemId = req.params.tradeItemId;
-    const offeredItemId = req.params.offeredItemId;
-    // first make sure the offeredItem doesn't have any offers and is not already offered
-    const offeredItem = await TradeItem.findById(offeredItemId);
-    if(!offeredItem) {
-      return res.status(404).send({message: 'Offered item ID not found'});
-    }
-    if(offeredItem.offers || offeredItem.offeredTo) {
-      return res.status(400).send({message: 'This item is not available for trading'});
-    }
-    // add the offeredItem to the tradedItem's offers and update tradeItem's status to 'ReceivedOffers'
-    let tradeItem = await TradeItem.findById(tradedItemId);
-    let tradeItemOffers = tradeItem.offers;
-    tradeItemOffers.push(offeredItemId);
-    tradeItem = await TradeItem.findByIdAndUpdate(
-      tradedItemId,
-      {
-        offers: tradeItemOffers,
-        status: 'ReceivedOffers'
-      }
-    )
-    if(!tradeItem) {
-      return res.status(404).send({message: 'Could not find TradeItem to update'})
-    }
+const makeOffer = async (req, res) => {
+    try {
+        const tradedItemId = req.params.tradedItemId;
+        const offeredItemId = req.params.offeredItemId;
+        // first make sure the offeredItem doesn't have any offers and is not already offered
+        let offeredItem = await TradeItem.findById(offeredItemId);
+        if (!offeredItem) {
+            return res
+                .status(404)
+                .send({ message: 'Offered item ID not found' });
+        }
+        if (offeredItem.offeredTo || offeredItem.offers.length) {
+            return res
+                .status(400)
+                .send({ message: 'This item is not available for trading' });
+        }
+        // add the offeredItem to the tradedItem's offers and update tradeItem's status to 'ReceivedOffers'
+        let tradeItem = await TradeItem.findById(tradedItemId);
+        let tradeItemOffers = tradeItem.offers;
+        tradeItemOffers.push(offeredItemId);
+        tradeItem = await TradeItem.findByIdAndUpdate(tradedItemId, {
+            offers: tradeItemOffers,
+            status: 'ReceivedOffers',
+        });
 
-    // update offeredItem status to "Offered" and add tradeItemId as the offeredTo property
-    offeredItem = await TradeItem(
-      offeredItemId,
-      {
-        offeredTo: tradedItemId,
-        status: 'Offered'
-      }
-    )
-    if(!offeredItem) {
-      return res.status(400).send({message: 'Could not update offered item'});
+        if (!tradeItem) {
+            return res
+                .status(404)
+                .send({ message: 'Could not find TradeItem to update' });
+        }
+
+        // update offeredItem status to "Offered" and add tradeItemId as the offeredTo property
+        offeredItem = await TradeItem.findByIdAndUpdate(offeredItemId, {
+            offeredTo: tradedItemId,
+            status: 'Offered',
+        });
+        if (!offeredItem) {
+            return res
+                .status(400)
+                .send({ message: 'Could not update offered item' });
+        }
+        return res.status(200).send({ message: 'Offer made successfully' });
+    } catch (e) {
+        return res
+            .status(500)
+            .send({ message: 'Error when attempting to make the offer' });
     }
-    return res.status(200).send({message: 'Offer made successfully'});
-  } catch(e) {
-    return res.status(500).send({message: 'Error when attempting to make the offer'});
-  }
-}
+};
 
 const acceptOffer = async (req, res) => {
     try {
         const offeredItemId = req.params.offeredItemId;
-        const tradedItemId = offeredItemId.offeredTo;
+        let offeredItem = await TradeItem.findById(offeredItemId);
+        let tradedItemId = offeredItem.offeredTo.toString();
+        if (!offeredItem) {
+            return res
+                .status(404)
+                .send({ success: false, message: 'Offered item not found' });
+        }
+        if (!tradedItemId) {
+            return res
+                .status(404)
+                .send({ success: false, message: 'Traded item not found' });
+        }
         // generate and save the new Trade
         let newTrade = new Trade({
             tradeItem: tradedItemId,
@@ -179,7 +194,7 @@ const acceptOffer = async (req, res) => {
         }
 
         // update offeredItem's tradedTo property and status to "PendingTrade"
-        const offeredItem = await TradeItem.findByIdAndUpdate(
+        offeredItem = await TradeItem.findByIdAndUpdate(
             offeredItemId,
             {
                 tradedTo: tradedItemId,
@@ -259,9 +274,104 @@ const acceptOffer = async (req, res) => {
     }
 };
 
+const rejectOffer = async (req, res) => {
+    try {
+        const offeredItemId = req.params.offeredItemId;
+        const tradedItemId = req.params.tradedItemId;
+        removeOffer(tradedItemId, offeredItemId);
+
+        // Send a rejection notification to the offerer
+        let offeredItem = await TradeItem.findById(offeredItemId);
+        let tradedItem = await TradeItem.findById(tradedItemId);
+        let offererStore = await UserStore.findById(offeredItem.traderStore);
+        let offerer = await User.findById(offererStore.user.toString());
+        let userId = offerer._id.toString();
+        let notification = new Notification({
+            user: userId,
+            type: 'Offer Rejected',
+            description: `Your offer ${offeredItem.name} has been rejected for trade item ${tradedItem.name}`,
+        });
+        notification = await notification.save();
+        if (!notification) {
+            return res.send({
+                success: false,
+                message: 'Could not create rejection notification',
+            });
+        }
+        let offererNotifications = offerer.notifications;
+        offererNotifications.push(notification);
+        offerer = await User.findByIdAndUpdate(userId, {
+            notifications: offererNotifications,
+        });
+        if (!offerer) {
+            return res
+                .status(404)
+                .send({
+                    success: false,
+                    message: 'Offeror notifications could not be updated',
+                });
+        }
+        return res
+            .status(200)
+            .send({
+                success: true,
+                message: 'Trade offer successfully was rejected',
+                notification: notification,
+            });
+    } catch (e) {
+        return res
+            .status(500)
+            .send({ success: false, message: 'Error rejecting offer' });
+    }
+};
+
+// this is a non-exported function to be used both by rejectOffer
+// and cancelOffer exported functions.  It removes the offer from the
+// tradeItem's offers array and also sets the offeredItem's
+// offeredTo property to null
+const removeOffer = async (tradedItemId, offeredItemId) => {
+    // Remove from tradeItem's offers array, updating status if needed
+    let tradedItem = await TradeItem.findById(tradedItemId);
+    if (!tradedItem) {
+        return res
+            .status(404)
+            .send({ success: false, message: 'Traded Item not found' });
+    }
+    let offers = tradedItem.offers;
+    offers = offers.filter((offer) => offer.toString() !== offeredItemId);
+    let tradedItemStatus = offers.length ? 'ReceivedOffers' : 'NoOffers';
+
+    tradedItem = await TradeItem.findByIdAndUpdate(tradedItemId, {
+        offers: offers,
+        status: tradedItemStatus
+    });
+    if (!tradedItem) {
+        return res
+            .status(400)
+            .send({
+                success: false,
+                message: 'Trade Item offers could not be updated',
+            });
+    }
+    // Set the offeredItem's offeredTo property to null, updating status
+    let offeredItem = await TradeItem.findByIdAndUpdate(offeredItemId, {
+        offeredTo: null,
+        status: 'NoOffers'
+    });
+    if (!offeredItem) {
+        return res
+            .status(400)
+            .send({
+                success: false,
+                message: 'Offered item offeredTo property could not be updated',
+            });
+    }
+};
+
 module.exports = {
     updateItemForTrade,
     deleteTradeItem,
     makeOffer,
     acceptOffer,
+    rejectOffer,
 };

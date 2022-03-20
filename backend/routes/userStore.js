@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
 const uploadOptions = multer({ storage: storage })
 
 router
-    .route('/current-trades/:userStoreId')
+    .route('/trades/:userStoreId')
     .get(userStoreCtrl.getItemsForTrade)
     .post(uploadOptions.single('image'), userStoreCtrl.addItemForTrade)
 //     .delete(userStoreCtrl.deleteItemForTrade);
