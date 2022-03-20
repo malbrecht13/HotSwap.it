@@ -35,7 +35,11 @@ router
     .delete(tradeItemCtrl.deleteTradeItem)
 
 router
-    .route('/acceptOffer/:offeredItemId/for/:tradeItemId')
+    .route('/makeOffer/:offeredItemId/for/:tradedItemId')
+    .post(tradeItemCtrl.makeOffer)
+
+router
+    .route('/acceptOffer/:offeredItemId')
     .post(tradeItemCtrl.acceptOffer)
 
 module.exports = router;
