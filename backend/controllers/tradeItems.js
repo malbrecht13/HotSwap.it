@@ -304,20 +304,16 @@ const rejectOffer = async (req, res) => {
             notifications: offererNotifications,
         });
         if (!offerer) {
-            return res
-                .status(404)
-                .send({
-                    success: false,
-                    message: 'Offeror notifications could not be updated',
-                });
-        }
-        return res
-            .status(200)
-            .send({
-                success: true,
-                message: 'Trade offer successfully was rejected',
-                notification: notification,
+            return res.status(404).send({
+                success: false,
+                message: 'Offeror notifications could not be updated',
             });
+        }
+        return res.status(200).send({
+            success: true,
+            message: 'Trade offer successfully was rejected',
+            notification: notification,
+        });
     } catch (e) {
         return res
             .status(500)
@@ -343,27 +339,74 @@ const removeOffer = async (tradedItemId, offeredItemId) => {
 
     tradedItem = await TradeItem.findByIdAndUpdate(tradedItemId, {
         offers: offers,
-        status: tradedItemStatus
+        status: tradedItemStatus,
     });
     if (!tradedItem) {
-        return res
-            .status(400)
-            .send({
-                success: false,
-                message: 'Trade Item offers could not be updated',
-            });
+        return res.status(400).send({
+            success: false,
+            message: 'Trade Item offers could not be updated',
+        });
     }
-    // Set the offeredItem's offeredTo property to null, updating status
+    // Set the offeredItem's offeredTo property to null and update status
     let offeredItem = await TradeItem.findByIdAndUpdate(offeredItemId, {
         offeredTo: null,
-        status: 'NoOffers'
+        status: 'NoOffers',
     });
     if (!offeredItem) {
+        return res.status(400).send({
+            success: false,
+            message: 'Offered item offeredTo property could not be updated',
+        });
+    }
+};
+
+const cancelOffer = async (req, res) => {
+    try {
+        const offeredItemId = req.params.offeredItemId;
+        const tradedItemId = req.params.tradedItemId;
+        removeOffer(tradedItemId, offeredItemId);
         return res
-            .status(400)
+            .status(200)
+            .send({ success: true, message: 'Offer succesfully cancelled' });
+    } catch (e) {
+        return res
+            .status(500)
+            .send({ success: false, message: 'Error cancelling offer' });
+    }
+};
+
+const itemHasShipped = async (req, res) => {
+    try {
+        const tradeItemId = req.params.tradeItemId;
+        // Do not allow to ship unless status is "PendingTrade"
+        let tradeItem = await TradeItem.findById(tradeItemId);
+        let status = tradeItem.status;
+        console.log(status);
+        if (status !== 'PendingTrade') {
+            return res
+                .status(400)
+                .send({
+                    success: false,
+                    message:
+                        'The item selected to ship is not in a pending trade',
+                });
+        }
+        tradeItem = await TradeItem.findByIdAndUpdate(
+            tradeItemId,
+            {
+                hasShipped: true,
+                status: 'ItemShipped'
+            },
+            { new: true }
+        );
+        return res.status(200).send(tradeItem);
+    } catch (e) {
+        return res
+            .status(500)
             .send({
                 success: false,
-                message: 'Offered item offeredTo property could not be updated',
+                message:
+                    'Converting hasShipped property to true resulted in an error',
             });
     }
 };
@@ -374,4 +417,6 @@ module.exports = {
     makeOffer,
     acceptOffer,
     rejectOffer,
+    cancelOffer,
+    itemHasShipped,
 };
