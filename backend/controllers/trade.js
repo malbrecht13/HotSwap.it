@@ -8,7 +8,6 @@ const itemHasShipped = async (req, res) => {
     try {
         const itemToShipId = req.params.itemToShipId;
         const tradeId = req.params.tradeId;
-        // Do not allow to ship unless status is "PendingTrade"
         let itemToShip = await TradeItem.findById(itemToShipId);
         // Update itemToShip status
         itemToShip = await TradeItem.findByIdAndUpdate(
@@ -77,8 +76,6 @@ const itemHasShipped = async (req, res) => {
             notifications: otherUserNotifications,
         });
         if (!notification || !otherUser) {
-          console.log(notification)
-          console.log(otherUser)
             return res
                 .status(400)
                 .send({
@@ -108,7 +105,6 @@ const cancelTrade = async(req,res) => {
   }
   // only trades that don't have an item shipped can be cancelled
   if (!(trade.status === 'NoItemsShipped')) {
-    console.log('here');
     res.status(400).send({success: false, message: 'The Trade cannot be cancelled because one or more items have already shipped or trade already cancelled'});
     return;
   }
@@ -146,6 +142,33 @@ const cancelTrade = async(req,res) => {
   if (!offeredItem || !tradedItem) {
     res.status(400).send({success: false, message: 'Could not update traded item or offered item'});
   }
+
+  // TODO: Send notification to both users that trade was cancelled
+  const offeredItemUserStoreId = offeredItem.traderStore;
+  const tradedItemUserStoreId = tradedItem.traderStore;
+  const offererStore = await TradeItem.findById(offeredItemUserStoreId);
+  const traderStore = await TradeItem.findById(tradedItemUserStoreId);
+  let offererId = offererStore.user.toString();
+  let traderId = traderStore.user.toString();
+  // create a notification for each user
+  let offererNotification = new Notification({
+    user: offererId,
+    type: 'Trade Cancelled',
+    description: `Your trade of ${offeredItem.name} for ${tradedItem.name} has been cancelled`
+  })
+  offererNotification = await offererNotification.save();
+  let traderNotification = new Notification({
+    user: traderId,
+    type: 'Trade Cancelled',
+    description: `Your trade of ${tradedItem.name} for ${offeredItem.name} has been cancelled`
+  })
+  offererNotification = await offererNotification.save();
+  traderNotification = await traderNotification.save();
+  if (!offererNotification || !traderNotification) {
+    res.status(400).send({success: false, message: 'Could not create notification for cancelled trade'});
+    return;
+  }
+  // TODO: send notifications
   
   return res.status(200).send({success: true, message: 'Succesfully cancelled the trade'});
 
