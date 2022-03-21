@@ -23,10 +23,12 @@ const api = process.env.API_URL;
 const userRouter = require('./routes/user');
 const tradeItemRouter = require('./routes/tradeItem');
 const userStoreRouter = require('./routes/userStore');
+const tradeRouter = require('./routes/trade');
 
 app.use(`${api}/users`, userRouter);
 app.use(`${api}/userstore`, userStoreRouter);
 app.use(`${api}/tradeitems`, tradeItemRouter);
+app.use(`${api}/trade`, tradeRouter);
 
 const port = process.env.PORT;
 

@@ -50,8 +50,4 @@ router
     .route('/cancel-offer/:offeredItemId/for/:tradedItemId')
     .post(tradeItemCtrl.cancelOffer);
 
-router
-    .route('/ship-item/:tradeItemId')
-    .post(tradeItemCtrl.itemHasShipped);
-
 module.exports = router;
