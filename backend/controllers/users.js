@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // register a new user
-const createUser = async (req, res) => {
+const register = async (req, res) => {
     try {
         const passHash = bcrypt.hashSync(req.body.password, 10); //encrypt the password
         let userStore = new UserStore();
@@ -188,5 +188,5 @@ module.exports = {
     updatePassword,
     updateAddress,
     login,
-    createUser,
+    register,
 };

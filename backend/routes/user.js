@@ -8,7 +8,7 @@ router
 
 router
   .route('/register')
-  .post(ctrlUsers.createUser)
+  .post(ctrlUsers.register)
 
 router
   .route('/update/username/:id')
