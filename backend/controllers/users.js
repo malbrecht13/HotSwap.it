@@ -41,6 +41,8 @@ const register = async (req, res) => {
                 .status(400)
                 .send({ message: 'UserStore could not update user' });
         }
+        //To send back to front end, delete passwordHash
+        delete user.passwordHash;
         return res.status(200).send(user);
     } catch (e) {
         return res
