@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const morgan = require('morgan'); // http request logger middleware
+// const morgan = require('morgan'); // http request logger middleware
 const cors = require('cors');
 
 require('dotenv/config'); // the dotenv library allows us to use environment variables from .env file
@@ -11,7 +11,7 @@ const errorHandler = require('./helpers/error-handler'); // handle api errors
 // Use middleware
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(morgan('tiny'));
+// app.use(morgan('tiny'));
 app.use(cors());
 app.options('*', cors());
 // app.use(authJwt());  //use to require authorization to access api
