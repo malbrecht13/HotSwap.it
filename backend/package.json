@@ -4,7 +4,12 @@
   "description": "Project for Software Engineering course",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "engines": {
+     "node": ">=14.15.0",
+     "npm": ">=8.4.0"
   },
   "author": "Michael Albrecht",
   "license": "ISC",
