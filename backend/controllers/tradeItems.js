@@ -153,7 +153,7 @@ const makeOffer = async (req, res) => {
 
 const acceptOffer = async (req, res) => {
     try {
-        const offeredItemId = req.params.offeredItemId;
+        const offeredItemId = req.body.offeredItemId;
         let offeredItem = await TradeItem.findById(offeredItemId);
         let tradedItemId = offeredItem.offeredTo.toString();
         if (!offeredItem) {
