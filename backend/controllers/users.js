@@ -156,7 +156,7 @@ const updateAddress = async (req, res) => {
         if (!userExists) {
             return res.status(404).send({ message: 'User not found' });
         }
-        const user = await User.findByIdAndUpdate(
+        let user = await User.findByIdAndUpdate(
             req.params.id,
             {
                 email: req.body.email,
