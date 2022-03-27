@@ -110,7 +110,7 @@ const updateUsername = async (req, res) => {
                 .status(400)
                 .send({ message: 'The username could not be updated' });
         }
-        return res.status(200).send(user);
+        return res.status(200).send({success: true, message: `Username successfully changed to ${user.username}`});
     } catch (e) {
         res.status(500).send({
             success: false,
