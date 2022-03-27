@@ -92,13 +92,14 @@ const deleteTradeItem = async (req, res) => {
                 .status(404)
                 .json({ success: false, message: 'Product not found' });
         }
+        //TODO: Notify any offerers when a trade item is deleted
         return res
             .status(200)
             .json({ success: true, message: 'Product successfully deleted' });
     } catch (e) {
         return res
             .status(500)
-            .json({ success: false, message: 'Error deleting Trade item' });
+            .json({ success: false, message: 'Error deleting Trade item', err: e});
     }
 };
 
@@ -241,7 +242,7 @@ const acceptOffer = async (req, res) => {
                 .status(404)
                 .send({ message: 'Offered item UserStore not found' });
         }
-
+        //FIXME: offererId may not be correct
         // Generate notification for offerer
         let offererId = offeredItemStore.user;
         let notification = new Notification({
