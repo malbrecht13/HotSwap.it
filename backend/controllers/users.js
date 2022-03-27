@@ -174,6 +174,7 @@ const updateAddress = async (req, res) => {
                 .status(400)
                 .send({ message: 'The address could not be updated' });
         }
+        delete user.passwordHash;
         return res.status(200).send(user);
     } catch (e) {
         res.status(500).send({
