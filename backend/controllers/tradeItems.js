@@ -104,8 +104,8 @@ const deleteTradeItem = async (req, res) => {
 
 const makeOffer = async (req, res) => {
     try {
-        const tradedItemId = req.params.tradedItemId;
-        const offeredItemId = req.params.offeredItemId;
+        const tradedItemId = req.body.tradedItemId;
+        const offeredItemId = req.body.offeredItemId;
         // first make sure the offeredItem doesn't have any offers and is not already offered
         let offeredItem = await TradeItem.findById(offeredItemId);
         if (!offeredItem) {

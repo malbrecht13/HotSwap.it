@@ -81,7 +81,6 @@ const addItemForTrade = async (req, res) => {
 module.exports = {
     getItemsForTrade,
     addItemForTrade,
-    // deleteItemForTrade,
     // getPreviousTrades,
     // getAvgRating
 };
