@@ -270,7 +270,7 @@ const acceptOffer = async (req, res) => {
 
         return res.status(200).send(newTrade);
     } catch (e) {
-        return res.status(500).send({ message: 'Error accepting trade offer' });
+        return res.status(500).send({ message: 'Error accepting trade offer', error: e});
     }
 };
 
