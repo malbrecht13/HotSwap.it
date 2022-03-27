@@ -72,7 +72,7 @@ const addItemForTrade = async (req, res) => {
     } catch (e) {
         return res
             .status(500)
-            .send({ message: 'Error while attempting to add item for trade' });
+            .send({ message: 'Error while attempting to add item for trade', error: e });
     }
 };
 
