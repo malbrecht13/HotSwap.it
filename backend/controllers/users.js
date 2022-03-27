@@ -140,7 +140,7 @@ const updatePassword = async (req, res) => {
                 .status(400)
                 .send({ message: 'The password could not be updated' });
         }
-        return res.status(200).send(user);
+        return res.status(200).send({success: true, message: 'Successfully updated password'});
     } catch (e) {
         res.status(500).send({
             success: false,
