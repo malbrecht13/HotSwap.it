@@ -11,7 +11,7 @@ const getItemsForTrade = async (req, res) => {
         if (!userStore.itemsForTrade) {
             return res.status(404).send({ message: 'Trade items not found' });
         }
-        return res.status(200).send(userStore.itemsForTrade);
+        return res.status(200).send({itemsForTrade: userStore.itemsForTrade});
     } catch (e) {
         return res.status(500).send({ message: 'Error getting trade items' });
     }

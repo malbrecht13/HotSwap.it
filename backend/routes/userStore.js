@@ -33,7 +33,6 @@ router
     .route('/trades/:userStoreId')
     .get(userStoreCtrl.getItemsForTrade)
     .post(uploadOptions.single('image'), userStoreCtrl.addItemForTrade)
-//     .delete(userStoreCtrl.deleteItemForTrade);
 
 
 
