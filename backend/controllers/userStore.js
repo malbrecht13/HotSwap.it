@@ -26,7 +26,7 @@ const addItemForTrade = async (req, res) => {
           return res.status(400).send({message: 'No image in the request'});
         }
         const fileName = req.file.filename;
-        const imagePath = `${req.protocol}://${req.get('host')}/public/uploads/${fileName}`
+        const imagePath = `${req.protocol}://${req.get('host')}/backend/public/uploads/${fileName}`
         //trade item to add
         let tradeItem = new TradeItem({
             name: req.body.name,
