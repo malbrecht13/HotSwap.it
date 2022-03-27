@@ -30,7 +30,7 @@ app.use(`${api}/userstore`, userStoreRouter);
 app.use(`${api}/tradeitems`, tradeItemRouter);
 app.use(`${api}/trade`, tradeRouter);
 
-const port = process.env.PORT;
+const port = process.env.PORT || 4500;
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
