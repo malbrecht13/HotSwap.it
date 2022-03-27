@@ -41,7 +41,7 @@ const register = async (req, res) => {
                 .status(400)
                 .send({ message: 'UserStore could not update user' });
         }
-        return res.status(200).send({success: true, message: 'User sucessfully registered'});
+        return res.status(200).send({success: true, message: 'User successfully registered'});
     } catch (e) {
         return res
             .status(500)
@@ -64,7 +64,7 @@ const login = async (req, res) => {
                     userId: user.id,
                 },
                 secret,
-                { expiresIn: '1d' }
+                { expiresIn: '2' }
             );
             res.status(200).send({ user: user.username, token: token });
         } else {
