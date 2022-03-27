@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     if(isValid) {
       uploadError = null;
     }
-    cb(uploadError, 'public/uploads')
+    cb(uploadError, 'backend/public/uploads')
   },
   filename: function (req, file, cb) {
     const fileName = file.originalname.split(' ').join('-');
