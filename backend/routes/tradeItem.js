@@ -35,19 +35,19 @@ router
     .delete(tradeItemCtrl.deleteTradeItem);
 
 router
-    .route('/make-offer/:offeredItemId/for/:tradedItemId')
+    .route('/make-offer')
     .post(tradeItemCtrl.makeOffer);
 
 router
-    .route('/accept-offer/:offeredItemId')
+    .route('/accept-offer')
     .post(tradeItemCtrl.acceptOffer);
 
 router
-    .route('/reject-offer/:offeredItemId/for/:tradedItemId')
+    .route('/reject-offer')
     .post(tradeItemCtrl.rejectOffer);
 
 router
-    .route('/cancel-offer/:offeredItemId/for/:tradedItemId')
+    .route('/cancel-offer')
     .post(tradeItemCtrl.cancelOffer);
 
 module.exports = router;
