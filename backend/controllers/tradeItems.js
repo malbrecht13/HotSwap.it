@@ -64,7 +64,7 @@ const deleteTradeItem = async (req, res) => {
         let image = itemToDelete.image;
         const startOfPath = image.indexOf('/public');
         const imagePath = image.substring(startOfPath);
-        fs.unlinkSync('../backend' + imagePath);
+        fs.unlinkSync(imagePath);
 
         const newUserStoreItemsForTrade = userStore.itemsForTrade.filter(
             (tradeItemId) => {
