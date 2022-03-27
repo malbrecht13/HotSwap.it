@@ -64,9 +64,9 @@ const login = async (req, res) => {
                     userId: user.id,
                 },
                 secret,
-                { expiresIn: '2' }
+                { expiresIn: '1d' }
             );
-            res.status(200).send({ user: user.username, token: token });
+            res.status(200).send({ user: user.username, userId: user.id, token: token });
         } else {
             res.status(400).send({
                 message: 'The username or password was not correct',
