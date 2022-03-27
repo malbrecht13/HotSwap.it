@@ -174,8 +174,15 @@ const updateAddress = async (req, res) => {
                 .status(400)
                 .send({ message: 'The address could not be updated' });
         }
-        delete user.passwordHash;
-        return res.status(200).send(user);
+        const newUserAddress = {
+          email: user.email,
+          shippingAddressLine1: user.shippingAddressLine1,
+          shippingAddressLine2: user.shippingAddressLine2,
+          city: user.city,
+          state: user.state,
+          zip: user.zip
+        }
+        return res.status(200).send(newUserAddress);
     } catch (e) {
         res.status(500).send({
             success: false,
