@@ -30,7 +30,7 @@ app.use(`${api}/userstore`, userStoreRouter);
 app.use(`${api}/tradeitems`, tradeItemRouter);
 app.use(`${api}/trade`, tradeRouter);
 
-let port = 4200;
+let port;
 if (!process.env.NODE_ENV === 'production') {
   port = process.env.PORT || 4200;
 }
