@@ -72,7 +72,6 @@ const login = async (req, res) => {
                 message: 'The username or password was not correct',
             });
         }
-        return res.status(200).send(user);
     } catch (e) {
         res.status(500).send({ message: 'Server error' });
     }
