@@ -73,7 +73,7 @@ const login = async (req, res) => {
             });
         }
     } catch (e) {
-        res.status(500).send({ message: 'Server error', error: e });
+        res.status(500).send({ message: 'Server error', error: e.message });
     }
 };
 
