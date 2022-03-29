@@ -11,7 +11,7 @@ function authJwt() {
         path: [
           `${api}/users/login`,
           `${api}/users/register`,
-          `${api}/userstore/*`
+          `${api}/users/update/*`
         ]
       }
     );
