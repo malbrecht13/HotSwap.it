@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userStoreCtrl = require('../controllers/userStore');
 const multer = require('multer');
+const path = require('path');
 
 // adding png, jpg, and jpeg images are supported
 const FILE_TYPE_MAP = {
@@ -18,7 +19,7 @@ const storage = multer.diskStorage({
     if(isValid) {
       uploadError = null;
     }
-    cb(uploadError, __dirname)
+    cb(uploadError, 'public/uploads');
   },
   filename: function (req, file, cb) {
     const fileName = file.originalname.split(' ').join('-');
