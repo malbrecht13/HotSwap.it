@@ -86,9 +86,9 @@ const addItemForTrade = async (req, res) => {
 const getPreviousTrades = async (req, res) => {
     try {
         //get the user store from the url param
-        const { storeId } = req.params;
+        const { userStoreId } = req.params;
         //use the id to get the userstore
-        let store = await UserStore.findById(storeId).populate('previousTrades');
+        let store = await UserStore.findById(userStoreId).populate('previousTrades');
         if (!store) {
             res.status(404).send({
                 success: false,
@@ -97,7 +97,7 @@ const getPreviousTrades = async (req, res) => {
         }
         //get the previousTrades from the store
         const previousTrades = store.previousTrades;
-        res.status(200).send({previousTrades: store});
+        res.status(200).send({previousTrades: previousTrades});
     } catch (e) {
         res.status(500).send({
             success: false,
