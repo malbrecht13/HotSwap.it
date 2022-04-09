@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const userStoreCtrl = require('../controllers/userStore');
 const multer = require('multer');
-const path = require('path');
 
 // adding png, jpg, and jpeg images are supported
 const FILE_TYPE_MAP = {
@@ -35,11 +34,9 @@ router
     .get(userStoreCtrl.getItemsForTrade)
     .post(uploadOptions.single('image'), userStoreCtrl.addItemForTrade)
 
-
-
-// router
-//     .route('/previous-trades/:userStoreId')
-//     .get(userStoreCtrl.getPreviousTrades);
+router
+    .route('/previous-trades/:userStoreId')
+    .get(userStoreCtrl.getPreviousTrades);
 
 // router
 //     .route('/avg-rating/:userStoreId')
