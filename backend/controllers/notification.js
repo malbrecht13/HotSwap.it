@@ -54,10 +54,37 @@ const getDescription = (type, tradeItem) => {
 
 }
 
-const deleteNotification = () => {
-  
+const deleteNotification = async (req,res) => {
+  try {
+    //get notificationId from params
+    const { notificationId } = req.params; 
+    //first remove the notification from the user's notification array
+    let notification = await Notification.findById(notificationId);
+    const userId = notification.user;
+    let user = await User.findById(userId);
+    let userNotifications = user.notifications;
+    userNotifications = userNotifications.filter(not => {
+      return notificationId !== not.toString();
+    })
+    user = await User.findByIdAndUpdate(
+      userId,
+      {
+        notifications: userNotifications
+      }
+    )
+    if(!user) {
+      res.status(404).send({success:false, message: 'User not found'});
+      return;
+    }
+    //now delete the notification
+    await Notification.findByIdAndRemove(notificationId);
+    return res.status(200).send({success: true, message: 'Notification deleted successfully'});
+  } catch(e) {
+    return res.status(500).send({success:false, message: 'Server error, could not delete notification'});
+  }
 }
 
 module.exports = {
-  createNotification
+  createNotification,
+  deleteNotification
 }

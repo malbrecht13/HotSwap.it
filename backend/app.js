@@ -25,14 +25,14 @@ const tradeItemRouter = require('./routes/tradeItem');
 const userStoreRouter = require('./routes/userStore');
 const tradeRouter = require('./routes/trade');
 const tradeStoreRouter = require('./routes/tradestore');
-
+const notificationRouter = require('./routes/notification');
 
 app.use(`${api}/users`, userRouter);
 app.use(`${api}/userstore`, userStoreRouter);
 app.use(`${api}/tradeitems`, tradeItemRouter);
 app.use(`${api}/trade`, tradeRouter);
 app.use(`${api}/tradestore`, tradeStoreRouter);
-
+app.use(`${api}/notification`, notificationRouter);
 
 let port = process.env.PORT || 4200;
 
