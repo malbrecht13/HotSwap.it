@@ -6,8 +6,7 @@ const { User } = require('../models/user');
 
 const itemHasShipped = async (req, res) => {
     try {
-        const itemToShipId = req.params.itemToShipId;
-        const tradeId = req.params.tradeId;
+        const { itemToShipId, tradeId } = req.body;
         let itemToShip = await TradeItem.findById(itemToShipId);
         // Update itemToShip status
         itemToShip = await TradeItem.findByIdAndUpdate(

@@ -3,7 +3,7 @@ const router = express.Router();
 const tradeCtrl = require('../controllers/trade');
 
 router
-    .route('/ship-item/:itemToShipId/ofTrade/:tradeId')
+    .route('/ship-item')
     .post(tradeCtrl.itemHasShipped)
 
 router
