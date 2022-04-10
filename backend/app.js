@@ -26,11 +26,13 @@ const userStoreRouter = require('./routes/userStore');
 const tradeRouter = require('./routes/trade');
 const tradeStoreRouter = require('./routes/tradestore');
 
+
 app.use(`${api}/users`, userRouter);
 app.use(`${api}/userstore`, userStoreRouter);
 app.use(`${api}/tradeitems`, tradeItemRouter);
 app.use(`${api}/trade`, tradeRouter);
 app.use(`${api}/tradestore`, tradeStoreRouter);
+
 
 let port = process.env.PORT || 4200;
 

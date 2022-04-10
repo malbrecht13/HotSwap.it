@@ -1,9 +1,9 @@
 const { TradeItem } = require('../models/tradeItem');
 const { Trade } = require('../models/trade');
-const { Notification } = require('../models/notification');
 const { UserStore } = require('../models/userStore');
 const { User } = require('../models/user');
 const { Rating } = require('../models/rating');
+const notificationCtrl = require('../controllers/notification');
 
 const itemHasShipped = async (req, res) => {
     try {
@@ -62,24 +62,28 @@ const itemHasShipped = async (req, res) => {
         );
         let otherUser = await User.findById(otherUserStore.user);
         const otherUserId = otherUser.id.toString();
-        let notification = new Notification({
-            user: otherUserId,
-            type: 'Item Shipped',
-            description: `Your trade partner has shipped their item: ${itemToShip.name}`,
-        });
-        notification = await notification.save();
-        let otherUserNotifications = otherUser.notifications;
-        otherUserNotifications.push(notification.id);
-        otherUser = await User.findByIdAndUpdate(otherUser.id, {
-            notifications: otherUserNotifications,
-        });
-        if (!notification || !otherUser) {
-            return res.status(400).send({
-                success: false,
-                message:
-                    'Could not send notification to the other user that item has shipped',
-            });
-        }
+        console.log("otherUserId", otherUserId);
+        console.log("tradeItemName", otherTradeItem.name);
+        //create and send the notification
+        notificationCtrl.createNotification(otherUserId, 'Item Shipped', itemToShip.name);
+        // let notification = new Notification({
+        //     user: otherUserId,
+        //     type: 'Item Shipped',
+        //     description: `Your trade partner has shipped their item: ${itemToShip.name}`,
+        // });
+        // notification = await notification.save();
+        // let otherUserNotifications = otherUser.notifications;
+        // otherUserNotifications.push(notification.id);
+        // otherUser = await User.findByIdAndUpdate(otherUser.id, {
+        //     notifications: otherUserNotifications,
+        // });
+        // if (!notification || !otherUser) {
+        //     return res.status(400).send({
+        //         success: false,
+        //         message:
+        //             'Could not send notification to the other user that item has shipped',
+        //     });
+        // }
 
         return res.status(200).send({ success: true, shippedItem: itemToShip });
     } catch (e) {

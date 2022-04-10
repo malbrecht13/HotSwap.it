@@ -114,12 +114,10 @@ const updateUsername = async (req, res) => {
                 .status(400)
                 .send({ message: 'The username could not be updated' });
         }
-        return res
-            .status(200)
-            .send({
-                success: true,
-                message: `Username successfully changed to ${user.username}`,
-            });
+        return res.status(200).send({
+            success: true,
+            message: `Username successfully changed to ${user.username}`,
+        });
     } catch (e) {
         res.status(500).send({
             success: false,
@@ -207,19 +205,42 @@ const getNotifications = async (req, res) => {
         //get userid from params
         const { id } = req.params;
         //get the user
-        let user = await User.findById(id).populate('notifications');
+        let user = await User.findById(id);
+        if(user.notifications.length) {
+          user = await User.findById(id).populate('notifications');
+        }
         if (!user) {
             res.status(404).send({ success: false, message: 'User not found' });
             return;
         }
         res.status(200).send({ notifications: user.notifications });
     } catch (e) {
-        return res
-            .status(500)
-            .send({
-                success: false,
-                message: 'Server error during attempt to get notifications',
-            });
+        return res.status(500).send({
+            success: false,
+            message: 'Server error during attempt to get notifications',
+        });
+    }
+};
+
+const getMessages = async (req, res) => {
+    try {
+        //get userid from params
+        const { id } = req.params;
+        //get the user
+        let user = await User.findById(id);
+        if(user.messages.length) {
+          user = await User.findById(id).populate('messages');
+        }
+        if (!user) {
+            res.status(404).send({ success: false, message: 'User not found' });
+            return;
+        }
+        res.status(200).send({ messages: user.messages });
+    } catch (e) {
+        return res.status(500).send({
+            success: false,
+            message: 'Server error during attempt to get messages',
+        });
     }
 };
 
@@ -230,4 +251,5 @@ module.exports = {
     login,
     register,
     getNotifications,
+    getMessages,
 };

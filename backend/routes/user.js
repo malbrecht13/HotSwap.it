@@ -26,6 +26,9 @@ router
   .route('/notifications/:id')
   .get(ctrlUsers.getNotifications)
 
+router
+  .route('/messages/:id')
+  .get(ctrlUsers.getMessages)
 
 
 module.exports = router;
