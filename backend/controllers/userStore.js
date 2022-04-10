@@ -74,12 +74,10 @@ const addItemForTrade = async (req, res) => {
             .status(201)
             .send({ itemAdded: tradeItem, userStore: userStore });
     } catch (e) {
-        return res
-            .status(500)
-            .send({
-                message: 'Error while attempting to add item for trade',
-                error: e,
-            });
+        return res.status(500).send({
+            message: 'Error while attempting to add item for trade',
+            error: e,
+        });
     }
 };
 
@@ -88,16 +86,19 @@ const getPreviousTrades = async (req, res) => {
         //get the user store from the url param
         const { userStoreId } = req.params;
         //use the id to get the userstore
-        let store = await UserStore.findById(userStoreId).populate('previousTrades');
+        let store = await UserStore.findById(userStoreId).populate(
+            'previousTrades'
+        );
         if (!store) {
             res.status(404).send({
                 success: false,
                 message: 'Could not find UserStore',
             });
+            return;
         }
         //get the previousTrades from the store
         const previousTrades = store.previousTrades;
-        res.status(200).send({previousTrades: previousTrades});
+        res.status(200).send({ previousTrades: previousTrades });
     } catch (e) {
         res.status(500).send({
             success: false,
@@ -106,9 +107,35 @@ const getPreviousTrades = async (req, res) => {
     }
 };
 
+const getAvgRating = async (req, res) => {
+    try {
+        //get the userStoreId from params
+        const { userStoreId } = req.params;
+        //use the id to get the userStore
+        const store = await UserStore.findById(userStoreId);
+        if (!store) {
+            res.status(404).send({
+                success: false,
+                message: 'Could not find UserStore',
+            });
+        }
+        const avgRating = store.userAvgRating;
+        if (!avgRating) {
+            res.status(200).send({ userAvgRating: null });
+            return;
+        }
+        res.status(200).send({ userAvgRating: avgRating });
+    } catch (e) {
+        res.status(500).send({
+            success: false,
+            message: 'Server error, cannot get average user rating',
+        });
+    }
+};
+
 module.exports = {
     getItemsForTrade,
     addItemForTrade,
     getPreviousTrades,
-    // getAvgRating
+    getAvgRating,
 };

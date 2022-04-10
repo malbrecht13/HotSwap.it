@@ -38,8 +38,8 @@ router
     .route('/previous-trades/:userStoreId')
     .get(userStoreCtrl.getPreviousTrades);
 
-// router
-//     .route('/avg-rating/:userStoreId')
-//     .get(userStoreCtrl.getAvgRating);
+router
+    .route('/avg-rating/:userStoreId')
+    .get(userStoreCtrl.getAvgRating);
 
 module.exports = router;
