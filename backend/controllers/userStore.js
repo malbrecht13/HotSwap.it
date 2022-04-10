@@ -112,14 +112,7 @@ const getAvgRating = async (req, res) => {
         //get the userStoreId from params
         const { userStoreId } = req.params;
         //use the id to get the userStore
-        const store = await UserStore.findById(userStoreId);
-        if (!store) {
-            res.status(404).send({
-                success: false,
-                message: 'Could not find UserStore',
-            });
-        }
-        const avgRating = store.userAvgRating;
+        const avgRating = await updateAvgRating(userStoreId);
         if (!avgRating) {
             res.status(200).send({ userAvgRating: null });
             return;
@@ -131,6 +124,22 @@ const getAvgRating = async (req, res) => {
             message: 'Server error, cannot get average user rating',
         });
     }
+};
+
+//This function is not exported.  Used within getAvgRating
+const updateAvgRating = async (userStoreId) => {
+    const store = await UserStore.findById(userStoreId).populate('ratings');
+    if (!store) {
+        res.status(404).send({
+            success: false,
+            message: 'Could not find UserStore',
+        });
+    }
+    //get the numbers from the ratings
+    const ratings = store.ratings.map((rating) => rating.rating);
+    const reducerFunc = (total, currentNum) => total + currentNum;
+    const rating = ratings.reduce(reducerFunc, 0);
+    return rating;
 };
 
 module.exports = {

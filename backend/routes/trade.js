@@ -10,4 +10,8 @@ router
     .route('/cancel-trade')
     .post(tradeCtrl.cancelTrade)
 
+router
+    .route('/rate-trader')
+    .post(tradeCtrl.rateTrader)
+
 module.exports = router;

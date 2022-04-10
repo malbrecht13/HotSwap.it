@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const userStoreSchema = mongoose.Schema({
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
     },
     itemsForTrade: [
         {
@@ -17,8 +17,14 @@ const userStoreSchema = mongoose.Schema({
             ref: 'Trade',
         },
     ],
+    ratings: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Rating',
+        },
+    ],
     userAvgRating: {
-        type: Number
+        type: Number,
     },
 });
 
