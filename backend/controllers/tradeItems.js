@@ -282,8 +282,8 @@ const acceptOffer = async (req, res) => {
 
 const rejectOffer = async (req, res) => {
     try {
-        const offeredItemId = req.params.offeredItemId;
-        const tradedItemId = req.params.tradedItemId;
+        const offeredItemId = req.body.offeredItemId;
+        const tradedItemId = req.body.tradedItemId;
         removeOffer(tradedItemId, offeredItemId);
 
         // Send a rejection notification to the offerer
@@ -368,16 +368,16 @@ const removeOffer = async (tradedItemId, offeredItemId) => {
 
 const cancelOffer = async (req, res) => {
     try {
-        const offeredItemId = req.params.offeredItemId;
-        const tradedItemId = req.params.tradedItemId;
+        const offeredItemId = req.body.offeredItemId;
+        const tradedItemId = req.body.tradedItemId;
         removeOffer(tradedItemId, offeredItemId);
         return res
             .status(200)
-            .send({ success: true, message: 'Offer succesfully cancelled' });
+            .send({ success: true, message: 'Offer successfully canceled' });
     } catch (e) {
         return res
             .status(500)
-            .send({ success: false, message: 'Error cancelling offer' });
+            .send({ success: false, message: 'Error canceling offer' });
     }
 };
 
