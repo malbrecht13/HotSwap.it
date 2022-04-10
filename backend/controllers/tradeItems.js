@@ -50,15 +50,17 @@ const deleteTradeItem = async (req, res) => {
         //first delete the item from the corresponding UserStore
         const itemToDelete = await TradeItem.findById(itemId);
         if (!itemToDelete) {
-            return res
+            res
                 .status(404)
                 .send({ message: 'Item to delete not found' });
+            return;
         }
-        let userStore = await UserStore.findById(itemToDelete.traderStore);
+        let userStore = await UserStore.findById(itemToDelete.traderStore.toString());
         if (!userStore) {
-            return res
+            res
                 .status(404)
                 .send({ message: "Item to delete's store not found" });
+            return;
         }
         //delete image from file path
         let image = itemToDelete.image;
@@ -66,13 +68,13 @@ const deleteTradeItem = async (req, res) => {
         const imagePath = image.substring(startOfPath);
         fs.unlinkSync('../backend' + imagePath);
 
-
+        //filter out the deletedItem
         const newUserStoreItemsForTrade = userStore.itemsForTrade.filter(
             (tradeItemId) => {
                 return tradeItemId.toString() !== itemId;
             }
         );
-
+        //now update the UserStore with the new itemsForTrade
         userStore = await UserStore.findByIdAndUpdate(
             itemToDelete.traderStore,
             {
@@ -81,17 +83,19 @@ const deleteTradeItem = async (req, res) => {
             { new: true }
         );
         if (!userStore) {
-            return res.status(400).send({
+            res.status(400).send({
                 message: 'User store could not delete the trade item',
             });
+            return;
         }
 
         //then delete the item from the TradeItem collection
         const deletedItem = await TradeItem.findByIdAndRemove(itemId);
         if (!deletedItem) {
-            return res
+            res
                 .status(404)
                 .json({ success: false, message: 'Product not found' });
+            return;
         }
         //TODO: Notify any offerers when a trade item is deleted
         return res
