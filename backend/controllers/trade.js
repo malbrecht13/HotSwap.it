@@ -62,28 +62,8 @@ const itemHasShipped = async (req, res) => {
         );
         let otherUser = await User.findById(otherUserStore.user);
         const otherUserId = otherUser.id.toString();
-        console.log("otherUserId", otherUserId);
-        console.log("tradeItemName", otherTradeItem.name);
         //create and send the notification
         notificationCtrl.createNotification(otherUserId, 'Item Shipped', itemToShip.name);
-        // let notification = new Notification({
-        //     user: otherUserId,
-        //     type: 'Item Shipped',
-        //     description: `Your trade partner has shipped their item: ${itemToShip.name}`,
-        // });
-        // notification = await notification.save();
-        // let otherUserNotifications = otherUser.notifications;
-        // otherUserNotifications.push(notification.id);
-        // otherUser = await User.findByIdAndUpdate(otherUser.id, {
-        //     notifications: otherUserNotifications,
-        // });
-        // if (!notification || !otherUser) {
-        //     return res.status(400).send({
-        //         success: false,
-        //         message:
-        //             'Could not send notification to the other user that item has shipped',
-        //     });
-        // }
 
         return res.status(200).send({ success: true, shippedItem: itemToShip });
     } catch (e) {
@@ -148,32 +128,21 @@ const cancelTrade = async (req, res) => {
             return;
         }
 
-        // FIXME: Send notification to both users that trade was cancelled
-        // const offeredItemUserStoreId = offeredItem.traderStore;
-        // const tradedItemUserStoreId = tradedItem.traderStore;
-        // const offererStore = await TradeItem.findById(offeredItemUserStoreId);
-        // const traderStore = await TradeItem.findById(tradedItemUserStoreId);
-        // let offererId = offererStore.user.toString();
-        // let traderId = traderStore.user.toString();
-        // // create a notification for each user
-        // let offererNotification = new Notification({
-        //   user: offererId,
-        //   type: 'Trade Canceled',
-        //   description: `Your trade of ${offeredItem.name} for ${tradedItem.name} has been cancelled`
-        // })
-        // offererNotification = await offererNotification.save();
-        // let traderNotification = new Notification({
-        //   user: traderId,
-        //   type: 'Trade Cancelled',
-        //   description: `Your trade of ${tradedItem.name} for ${offeredItem.name} has been cancelled`
-        // })
-        // offererNotification = await offererNotification.save();
-        // traderNotification = await traderNotification.save();
-        // if (!offererNotification || !traderNotification) {
-        //   res.status(400).send({success: false, message: 'Could not create notification for cancelled trade'});
-        //   return;
-        // }
-        // TODO: send notifications
+        //Get user id's to send notifications to both users
+        const offeredItemUserStoreId = offeredItem.traderStore;
+        const tradedItemUserStoreId = tradedItem.traderStore;
+        const offererStore = await UserStore.findById(offeredItemUserStoreId);
+        const traderStore = await UserStore.findById(tradedItemUserStoreId);
+        if(!offererStore || !traderStore) {
+          res.status(404).send({success:false, message: 'UserStore not found'});
+          return;
+        }
+        let offererId = offererStore.user.toString();
+        let traderId = traderStore.user.toString();
+        //send notifications
+
+        notificationCtrl.createNotification(offererId, 'Trade Canceled', tradedItem.name);
+        notificationCtrl.createNotification(traderId, 'Trade Canceled', offeredItem.name);
 
         return res.status(200).send({
             success: true,
@@ -194,7 +163,7 @@ const rateTrader = async (req, res) => {
         //Also need the userStore to add the rating
         const { tradeId, tradeItemId, ratingNum, comment } = req.body;
         const trade = await Trade.findById(tradeId);
-        const itemToRate = await TradeItem.findById(tradeItemId);
+        const itemToRate = await TradeItem.findById(tradeItemId).populate('traderStore');
         //make sure both items have shipped by checking the status of the trade
         const tradeStatus = trade.status;
         if (!tradeStatus === 'BothItemsShipped') {
@@ -215,11 +184,11 @@ const rateTrader = async (req, res) => {
         let updatedTrade;
         if (tradeItemId === trade.tradeItem.toString()) {
             updatedTrade = await Trade.findByIdAndUpdate(tradeId, {
-                ratingOfTrader: rating
+                ratingOfTrader: rating._id
             });
         } else if (tradeItemId === trade.offeredItem.toString()) {
             updatedTrade = await Trade.findByIdAndUpdate(tradeId, {
-                ratingOfOfferor: rating
+                ratingOfOfferor: rating._id
             });
         }
         if (!updatedTrade) {
@@ -228,7 +197,9 @@ const rateTrader = async (req, res) => {
                 message: 'Could not update rating of trader within the trade',
             });
         }
-        //TODO: Send notification of rating with comment to the other user
+        //Send notification of rating with comment to the other user
+        const userToNotify = itemToRate.traderStore.user;
+        notificationCtrl.createNotification(userToNotify, 'Received Rating', itemToRate.name);
         //now add the rating to the UserStore who is being rated
         const userStoreId = itemToRate.traderStore;
         let userStore = await UserStore.findById(userStoreId);
@@ -240,7 +211,7 @@ const rateTrader = async (req, res) => {
         }
         //get the userstore ratings and push new rating to it
         let userStoreRatings = userStore.ratings;
-        userStoreRatings.push(rating);
+        userStoreRatings.push(rating._id);
         //now update the userstore
         userStore = await UserStore.findByIdAndUpdate(userStoreId, {
             ratings: userStoreRatings,

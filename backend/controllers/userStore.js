@@ -112,13 +112,14 @@ const getAvgRating = async (req, res) => {
         //get the userStoreId from params
         const { userStoreId } = req.params;
         //use the id to get the userStore
-        const avgRating = await updateAvgRating(userStoreId);
+        const avgRating = await updateAvgRating(userStoreId, res);
         if (!avgRating) {
             res.status(200).send({ userAvgRating: null });
             return;
         }
-        res.status(200).send({ userAvgRating: avgRating });
+        return res.status(200).send({ userAvgRating: avgRating });
     } catch (e) {
+      console.log(e.message);
         res.status(500).send({
             success: false,
             message: 'Server error, cannot get average user rating',
@@ -127,7 +128,7 @@ const getAvgRating = async (req, res) => {
 };
 
 //This function is not exported.  Used within getAvgRating
-const updateAvgRating = async (userStoreId) => {
+const updateAvgRating = async (userStoreId, res) => {
     const store = await UserStore.findById(userStoreId).populate('ratings');
     if (!store) {
         res.status(404).send({

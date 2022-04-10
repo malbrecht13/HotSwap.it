@@ -54,6 +54,10 @@ const getDescription = (type, tradeItem) => {
 
 }
 
+const deleteNotification = () => {
+  
+}
+
 module.exports = {
   createNotification
 }
