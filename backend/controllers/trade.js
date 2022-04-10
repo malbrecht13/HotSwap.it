@@ -224,6 +224,7 @@ const rateTrader = async (req, res) => {
                 message: 'Could not update rating of trader within the trade',
             });
         }
+        //TODO: Send notification of rating with comment to the other user
         //now add the rating to the UserStore who is being rated
         const userStoreId = itemToRate.traderStore;
         let userStore = await UserStore.findById(userStoreId);

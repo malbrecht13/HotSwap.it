@@ -22,4 +22,10 @@ router
   .route('/update/address/:id')
   .patch(ctrlUsers.updateAddress)
 
+router
+  .route('/notifications/:id')
+  .get(ctrlUsers.getNotifications)
+
+
+
 module.exports = router;

@@ -25,12 +25,10 @@ const register = async (req, res) => {
 
         user = await user.save();
         if (!user) {
-            return res
-                .status(400)
-                .send({
-                    success: false,
-                    message: 'The user cannot be created',
-                });
+            return res.status(400).send({
+                success: false,
+                message: 'The user cannot be created',
+            });
         }
         // update UserStore to contain this User
         userStore = await UserStore.findByIdAndUpdate(userStore.id, {
@@ -41,7 +39,9 @@ const register = async (req, res) => {
                 .status(400)
                 .send({ message: 'UserStore could not update user' });
         }
-        return res.status(200).send({success: true, message: 'User successfully registered'});
+        return res
+            .status(200)
+            .send({ success: true, message: 'User successfully registered' });
     } catch (e) {
         return res
             .status(500)
@@ -66,7 +66,12 @@ const login = async (req, res) => {
                 secret,
                 { expiresIn: '1d' }
             );
-            res.status(200).send({ user: user.username, userId: user.id, userStore: user.store, token: token });
+            res.status(200).send({
+                user: user.username,
+                userId: user.id,
+                userStore: user.store,
+                token: token,
+            });
         } else {
             res.status(400).send({
                 message: 'The username or password was not correct',
@@ -101,7 +106,7 @@ const updateUsername = async (req, res) => {
             {
                 username: req.body.username,
             },
-            { new: true },
+            { new: true }
         );
 
         if (!user) {
@@ -109,7 +114,12 @@ const updateUsername = async (req, res) => {
                 .status(400)
                 .send({ message: 'The username could not be updated' });
         }
-        return res.status(200).send({success: true, message: `Username successfully changed to ${user.username}`});
+        return res
+            .status(200)
+            .send({
+                success: true,
+                message: `Username successfully changed to ${user.username}`,
+            });
     } catch (e) {
         res.status(500).send({
             success: false,
@@ -139,7 +149,9 @@ const updatePassword = async (req, res) => {
                 .status(400)
                 .send({ message: 'The password could not be updated' });
         }
-        return res.status(200).send({success: true, message: 'Successfully updated password'});
+        return res
+            .status(200)
+            .send({ success: true, message: 'Successfully updated password' });
     } catch (e) {
         res.status(500).send({
             success: false,
@@ -174,13 +186,13 @@ const updateAddress = async (req, res) => {
                 .send({ message: 'The address could not be updated' });
         }
         const newUserAddress = {
-          email: user.email,
-          shippingAddressLine1: user.shippingAddressLine1,
-          shippingAddressLine2: user.shippingAddressLine2,
-          city: user.city,
-          state: user.state,
-          zip: user.zip
-        }
+            email: user.email,
+            shippingAddressLine1: user.shippingAddressLine1,
+            shippingAddressLine2: user.shippingAddressLine2,
+            city: user.city,
+            state: user.state,
+            zip: user.zip,
+        };
         return res.status(200).send(newUserAddress);
     } catch (e) {
         res.status(500).send({
@@ -190,10 +202,32 @@ const updateAddress = async (req, res) => {
     }
 };
 
+const getNotifications = async (req, res) => {
+    try {
+        //get userid from params
+        const { id } = req.params;
+        //get the user
+        let user = await User.findById(id).populate('notifications');
+        if (!user) {
+            res.status(404).send({ success: false, message: 'User not found' });
+            return;
+        }
+        res.status(200).send({ notifications: user.notifications });
+    } catch (e) {
+        return res
+            .status(500)
+            .send({
+                success: false,
+                message: 'Server error during attempt to get notifications',
+            });
+    }
+};
+
 module.exports = {
     updateUsername,
     updatePassword,
     updateAddress,
     login,
     register,
+    getNotifications,
 };
