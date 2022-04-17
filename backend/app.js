@@ -11,7 +11,7 @@ const errorHandler = require('./helpers/error-handler'); // handle api errors
 // Use middleware
 app.use(cors());
 app.use(function(req,res,next) {
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.set('Access-Control-Allow-Origin', '*');
   next();
 })
 app.use(express.json());
