@@ -30,6 +30,7 @@ const addItemForTrade = async (req, res) => {
         }
         const result = await uploadFile(file);
         const imageKey = `${result.Key}`;
+        console.log(imageKey);
         //trade item to add
         let tradeItem = new TradeItem({
             name: req.body.name,
