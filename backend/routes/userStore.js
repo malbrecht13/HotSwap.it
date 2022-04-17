@@ -42,4 +42,8 @@ router
     .route('/avg-rating/:userStoreId')
     .get(userStoreCtrl.getAvgRating);
 
+router
+    .route('/images/:key')
+    .get(userStoreCtrl.getImage);
+
 module.exports = router;

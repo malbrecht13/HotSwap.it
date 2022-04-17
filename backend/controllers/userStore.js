@@ -1,5 +1,6 @@
 const { UserStore } = require('../models/userStore');
 const { TradeItem } = require('../models/tradeItem');
+const { uploadFile, getFileStream } = require('../s3');
 
 const getItemsForTrade = async (req, res) => {
     const userStoreId = req.params.userStoreId;
@@ -27,15 +28,13 @@ const addItemForTrade = async (req, res) => {
         if (!file) {
             return res.status(400).send({ message: 'No image in the request' });
         }
-        const fileName = req.file.filename;
-        const imagePath = `https://${req.get(
-            'host'
-        )}/public/uploads/${fileName}`;
+        const result = await uploadFile(file);
+        const imageKey = `${result.Key}`;
         //trade item to add
         let tradeItem = new TradeItem({
             name: req.body.name,
             brand: req.body.brand,
-            image: imagePath,
+            image: imageKey,
             condition: req.body.condition,
             itemCategory: req.body.itemCategory,
             description: req.body.description,
@@ -143,9 +142,17 @@ const updateAvgRating = async (userStoreId, res) => {
     return rating;
 };
 
+const getImage = async(req, res) => {
+  const key = req.params.key;
+  const readStream = getFileStream(key);
+
+  readStream.pipe(res);
+}
+
 module.exports = {
     getItemsForTrade,
     addItemForTrade,
     getPreviousTrades,
     getAvgRating,
+    getImage
 };
