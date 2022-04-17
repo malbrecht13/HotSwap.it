@@ -8,12 +8,13 @@
     "start": "node app.js"
   },
   "engines": {
-     "node": ">=14.15.0",
-     "npm": ">=8.4.0"
+    "node": ">=14.15.0",
+    "npm": ">=8.4.0"
   },
   "author": "Michael Albrecht",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1116.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^14.3.2",
