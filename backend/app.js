@@ -9,16 +9,16 @@ const authJwt = require('./helpers/jwt'); // allows user to use api only if auth
 const errorHandler = require('./helpers/error-handler'); // handle api errors
 
 // Use middleware
+app.use(cors());
+app.use(function(req,res,next) {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  next();
+})
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 // app.use(morgan('tiny'));
-app.use(cors());
-// app.use(function(req,res,next) {
-//   res.setHeader('Access-Control-Allow-Origin', '*')
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//   next();
-// })
-app.use(authJwt());  //use to require authorization to access api
+
+// app.use(authJwt());  //use to require authorization to access api
 app.use(errorHandler);
 app.use('/public/uploads', express.static(__dirname + '/public/uploads'));
 
