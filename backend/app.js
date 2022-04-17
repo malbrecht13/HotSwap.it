@@ -36,9 +36,9 @@ app.use(`${api}/trade`, tradeRouter);
 app.use(`${api}/tradestore`, tradeStoreRouter);
 app.use(`${api}/notification`, notificationRouter);
 
-let port = process.env.PORT || 4200;
+// let port = process.env.PORT || 4200;
 
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//     console.log(`Server is running on http://localhost:${port}`);
+// });
