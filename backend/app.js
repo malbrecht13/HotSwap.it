@@ -12,7 +12,7 @@ const errorHandler = require('./helpers/error-handler'); // handle api errors
 const corsOptions = {
   "origin": "*",
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": true,
+  "preflightContinue": false,
   "optionsSuccessStatus": 200
 }
 app.use(cors(corsOptions));
