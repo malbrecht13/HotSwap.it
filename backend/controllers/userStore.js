@@ -6,7 +6,13 @@ const getItemsForTrade = async (req, res) => {
     const userStoreId = req.params.userStoreId;
     try {
         const userStore = await UserStore.findById(userStoreId).populate(
-            'itemsForTrade'
+            {
+              path: 'itemsForTrade',
+              populate: {
+                path: 'offers',
+                model: 'TradeItem'
+              }
+            }
         );
         if (!userStore) {
             return res.status(400).send({ message: 'User store bad request' });
