@@ -11,7 +11,7 @@ function authJwt() {
         path: [
           `${api}/users/login`,
           `${api}/users/register`,
-          `${api}/users/update/*`
+          `${api}/users/update/*`,
           `${api}/tradestore/*`
         ]
       }
