@@ -9,7 +9,10 @@ const authJwt = require('./helpers/jwt'); // allows user to use api only if auth
 const errorHandler = require('./helpers/error-handler'); // handle api errors
 
 // Use middleware
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000'
+}
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
