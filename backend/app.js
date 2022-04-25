@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 // app.use(morgan('tiny'));
-app.use(authJwt());  //use to require authorization to access api
+// app.use(authJwt());  //use to require authorization to access api
 app.use(errorHandler);
 app.use('/public/uploads', express.static(__dirname + '/public/uploads'));
 
