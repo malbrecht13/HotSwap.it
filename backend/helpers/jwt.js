@@ -12,6 +12,7 @@ function authJwt() {
           `${api}/users/login`,
           `${api}/users/register`,
           `${api}/users/update/*`
+          `${api}/tradestore/*`
         ]
       }
     );
