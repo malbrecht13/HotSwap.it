@@ -11,7 +11,7 @@ const errorHandler = require('./helpers/error-handler'); // handle api errors
 // Use middleware
 const corsOptions = {
   "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+  "methods": "*",
   "preflightContinue": false,
   "optionsSuccessStatus": 200
 }
