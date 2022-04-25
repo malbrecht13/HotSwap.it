@@ -9,16 +9,7 @@ const authJwt = require('./helpers/jwt'); // allows user to use api only if auth
 const errorHandler = require('./helpers/error-handler'); // handle api errors
 
 // Use middleware
-app.use(function (request, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  //intercept the OPTIONS call so we don't double up on calls to the integration
-  if ('OPTIONS' === request.method) {
-    res.send(200);
-  } else {
-    next();
-  }
-});
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
