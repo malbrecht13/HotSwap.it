@@ -10,7 +10,7 @@ const errorHandler = require('./helpers/error-handler'); // handle api errors
 
 // Use middleware
 const corsOptions = {
-  origin: 'http://localhost:3000'
+  origin: '*'
 }
 app.use(cors(corsOptions));
 
