@@ -183,6 +183,7 @@ const acceptOffer = async (req, res) => {
                 .status(400)
                 .send({ message: 'New Trade could not be created' });
         }
+        console.log(newTrade);
 
         // update tradeItem's tradedTo property and change status to "PendingTrade"
         const tradedItem = await TradeItem.findByIdAndUpdate(

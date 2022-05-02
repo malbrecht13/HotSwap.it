@@ -58,6 +58,11 @@ const tradeItemSchema = mongoose.Schema({
         ref: 'TradeItem',
         default: null,
     },
+    trade: {
+      type: mongoose.Schema.Types.ObkectId,
+      ref: 'Trade',
+      default: null
+    },
     hasShipped: {
         type: Boolean,
         default: false,
