@@ -284,11 +284,21 @@ const acceptOffer = async (req, res) => {
 const rejectOffer = async (req, res) => {
     try {
         const offeredItemId = req.body.offeredItemId;
-        const tradedItemId = req.body.tradedItemId;
+        let offeredItem = await TradeItem.findById(offeredItemId);
+        let tradedItemId = offeredItem.offeredTo.toString();
+        if (!offeredItem) {
+            return res
+                .status(404)
+                .send({ success: false, message: 'Offered item not found' });
+        }
+        if (!tradedItemId) {
+            return res
+                .status(404)
+                .send({ success: false, message: 'Traded item not found' });
+        }
         removeOffer(tradedItemId, offeredItemId);
 
         // Send a rejection notification to the offerer
-        let offeredItem = await TradeItem.findById(offeredItemId);
         let tradedItem = await TradeItem.findById(tradedItemId);
         let offererStore = await UserStore.findById(offeredItem.traderStore);
         let offerer = await User.findById(offererStore.user.toString());
