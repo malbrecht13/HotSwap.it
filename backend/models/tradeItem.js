@@ -59,7 +59,7 @@ const tradeItemSchema = mongoose.Schema({
         default: null,
     },
     trade: {
-      type: mongoose.Schema.Types.ObkectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Trade',
       default: null
     },
